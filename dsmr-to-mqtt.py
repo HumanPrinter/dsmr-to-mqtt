@@ -76,9 +76,7 @@ for telegram in serial_reader.read_as_object():
         payload["value"] = float(telegram.HOURLY_GAS_METER_READING.value)
         client.publish(mqttTopic + '/5MINUTE_GAS_METER_READING', json.dumps(payload))
         client.publish(mqttTopic + '/EQUIPMENT_IDENTIFIER_GAS', bytearray.fromhex(telegram.EQUIPMENT_IDENTIFIER_GAS.value).decode())
-        payload = [{ "datetime": item.datetime, "duration": item.value } for item in telegram.POWER_EVENT_FAILURE_LOG.buffer]
+        payload = [{ "datetime": item.datetime.strftime("%d-%m-%Y %H:%M:%S%z"), "duration": item.value } for item in telegram.POWER_EVENT_FAILURE_LOG.buffer]
         client.publish(mqttTopic + '/POWER_EVENT_FAILURE_LOG', json.dumps(payload))
-        
-        client.publish(mqttTopic, telegram.to_json())
 
 client.disconnect()

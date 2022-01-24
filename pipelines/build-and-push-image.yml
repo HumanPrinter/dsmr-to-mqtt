@@ -1,4 +1,4 @@
-name: $(Date:yyyyMM)-$(SourceBranchName).$(rev:r)
+name: $(Date:yyyyMM).$(rev:r)-$(SourceBranchName)
 
 trigger:
   branches:
@@ -14,9 +14,9 @@ variables:
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     tags: |
       -t humanprinter.azurecr.io/dsmr-to-mqtt:latest \
-      -t humanprinter.azurecr.io/dsmr-to-mqtt:$(build.buildNumber) \
+      -t humanprinter.azurecr.io/dsmr-to-mqtt:$(Date:yyyyMM).$(rev:r) \
   ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
-    tags: -t humanprinter.azurecr.io/dsmr-to-mqtt:$(build.buildNumber)-$(Build.SourceBranchName)
+    tags: -t humanprinter.azurecr.io/dsmr-to-mqtt:$(Date:yyyyMM).$(rev:r)-$(Build.SourceBranchName)
 
 steps:
 - task: Docker@2

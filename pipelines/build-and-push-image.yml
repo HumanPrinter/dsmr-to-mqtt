@@ -1,0 +1,37 @@
+name: $(Date:yyyyMM)-$(SourceBranchName).$(rev:r)
+
+trigger:
+  branches:
+    include:
+    - master
+    - hotfix/*
+    - feature/*  
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    tags: |
+      -t humanprinter.azurecr.io/dsmr-to-mqtt:latest \
+      -t humanprinter.azurecr.io/dsmr-to-mqtt:$(build.buildNumber) \
+  ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
+    tags: -t humanprinter.azurecr.io/dsmr-to-mqtt:$(build.buildNumber)-$(Build.SourceBranchName)
+
+steps:
+- task: Docker@2
+  displayName: Docker Login
+  inputs:
+    containerRegistry: 'acr_humanprinter'
+    command: 'login'
+- task: CmdLine@2
+  displayName: Build
+  inputs:
+    script: |
+      docker run --privileged --rm tonistiigi/binfmt --install arm64,arm
+      docker run --privileged --rm tonistiigi/binfmt
+      docker buildx create --use
+      docker buildx build --platform linux/arm64,linux/arm/v7,linux/arm/v6 \
+        $(tags) \
+        --push \
+        ./src/

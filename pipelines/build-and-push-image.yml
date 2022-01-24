@@ -15,7 +15,7 @@ variables:
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     tags: |
       -t humanprinter.azurecr.io/dsmr-to-mqtt:latest \
-      -t humanprinter.azurecr.io/dsmr-to-mqtt:$(shortBuildName) }} \
+      -t humanprinter.azurecr.io/dsmr-to-mqtt:$(shortBuildName) }}
   ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
     tags: -t humanprinter.azurecr.io/dsmr-to-mqtt:$(Build.BuildNumber)
 
